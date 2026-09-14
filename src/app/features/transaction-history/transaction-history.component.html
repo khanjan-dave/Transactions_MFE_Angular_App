@@ -1,0 +1,38 @@
+<div class="history-page">
+  <div class="history-header">
+    <button class="back-btn" (click)="goBackToDashboard()">← Back to Dashboard</button>
+    <button class="new-transaction-btn" (click)="goToCreateTransaction()">+ New Transaction</button>
+  </div>
+
+  <h1>Transaction History</h1>
+
+  @if (loading$ | async) {
+    <div class="loading-state">Loading transactions...</div>
+  } @else {
+    @if ((transactions$ | async)?.length === 0) {
+      <div class="empty-state">No transactions yet.</div>
+    } @else {
+      <div class="transaction-list">
+        @for (txn of transactions$ | async; track txn.transactionReference) {
+          <div class="transaction-card">
+            <div class="transaction-card__main">
+              <span class="transaction-type">{{ txn.transactionType }}</span>
+              <span class="transaction-amount">${{ txn.amount | number: '1.2-2' }}</span>
+            </div>
+            <div class="transaction-card__meta">
+              <span [class]="statusBadgeClass(txn.status)">{{ txn.status }}</span>
+              <span [class]="riskBadgeClass(txn.riskLevel)">{{ txn.riskLevel }} risk</span>
+            </div>
+            @if (txn.receiverUsername) {
+              <div class="transaction-card__detail">To: {{ txn.receiverUsername }}</div>
+            }
+            @if (txn.description) {
+              <div class="transaction-card__detail">{{ txn.description }}</div>
+            }
+            <div class="transaction-card__date">{{ txn.initiatedAt | date: 'medium' }}</div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

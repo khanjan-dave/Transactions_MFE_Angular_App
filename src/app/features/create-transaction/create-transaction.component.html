@@ -1,0 +1,62 @@
+<div class="create-txn-page">
+  <div class="create-txn-card">
+    <h1>New Transaction</h1>
+
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="txn-form">
+      <div class="form-field">
+        <label for="transactionType">Type</label>
+        <select id="transactionType" formControlName="transactionType">
+          <option value="TRANSFER">Transfer</option>
+          <option value="DEPOSIT">Deposit</option>
+          <option value="WITHDRAWAL">Withdrawal</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="senderAccountNumber">Your Account Number</label>
+        <input id="senderAccountNumber" type="text" formControlName="senderAccountNumber" />
+      </div>
+
+      @if (transactionForm.get('transactionType')?.value === 'TRANSFER') {
+        <div class="form-field">
+          <label for="receiverAccountNumber">Receiver Account Number</label>
+          <input id="receiverAccountNumber" type="text" formControlName="receiverAccountNumber" />
+        </div>
+
+        <div class="form-field">
+          <label for="receiverUsername">Receiver Username</label>
+          <input id="receiverUsername" type="text" formControlName="receiverUsername" />
+        </div>
+      }
+
+      <div class="form-field">
+        <label for="amount">Amount</label>
+        <input id="amount" type="number" step="0.01" formControlName="amount" placeholder="0.00" />
+      </div>
+
+      <div class="form-field">
+        <label for="description">Description (optional)</label>
+        <input id="description" type="text" formControlName="description" />
+      </div>
+
+      @if (error$ | async; as error) {
+        <div class="error-banner">{{ error }}</div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="(creating$ | async) || transactionForm.invalid"
+        >
+          @if (creating$ | async) {
+            Processing...
+          } @else {
+            Submit
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
